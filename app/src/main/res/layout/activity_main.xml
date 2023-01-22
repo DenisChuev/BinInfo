@@ -31,57 +31,13 @@
         app:layout_constraintTop_toTopOf="@id/search_input"
         app:srcCompat="@android:drawable/ic_menu_search" />
 
-    <TextView
-        android:id="@+id/response_text"
-        android:layout_width="match_parent"
+    <include
+        android:id="@+id/bin_card"
+        layout="@layout/bin_card"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:layout_marginTop="64dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/search_input"
-        tools:text="Resp" />
-
-    <TextView
-        android:id="@+id/card_number"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="Card number:"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/response_text" />
-
-    <TextView
-        android:id="@+id/length_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="  length: "
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/card_number" />
-
-    <TextView
-        android:id="@+id/number_length_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/length_title"
-        app:layout_constraintTop_toTopOf="@id/length_title" />
-
-    <TextView
-        android:id="@+id/luhn_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:text="  luhn: "
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/length_title" />
-
-
-    <TextView
-        android:id="@+id/number_luhn_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toEndOf="@id/luhn_title"
-        app:layout_constraintTop_toTopOf="@id/luhn_title" />
+        app:layout_constraintTop_toBottomOf="@id/search_input" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
