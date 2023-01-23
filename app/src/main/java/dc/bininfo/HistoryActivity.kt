@@ -1,6 +1,9 @@
 package dc.bininfo
 
 import android.os.Bundle
+import android.transition.Visibility
+import android.view.View
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -20,21 +23,22 @@ class HistoryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_history)
 
         supportActionBar?.title = "История BIN"
+
+        val emptyHistoryText = findViewById<TextView>(R.id.history_empty_text)
         val historyRecycler = findViewById<RecyclerView>(R.id.history_recyclerview)
         val adapter = BinListAdapter()
         historyRecycler.adapter = adapter
         historyRecycler.layoutManager = LinearLayoutManager(this)
-        historyRecycler.addItemDecoration(
-            DividerItemDecoration(
-                applicationContext,
-                LinearLayoutManager.HORIZONTAL
-            )
-        )
 
         lifecycleScope.launch {
             (application as BinApplication).repository.bins.collect { binList ->
                 if (binList.isNotEmpty()) {
+                    historyRecycler.visibility = View.VISIBLE
+                    emptyHistoryText.visibility = View.GONE
                     adapter.submitList(binList)
+                } else {
+                    historyRecycler.visibility = View.GONE
+                    emptyHistoryText.visibility = View.VISIBLE
                 }
             }
         }

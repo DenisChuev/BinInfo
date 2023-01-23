@@ -3,9 +3,16 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
+        android:id="@+id/action_search"
+        android:icon="@drawable/ic_search"
+        android:title="@string/action_search"
+        app:actionViewClass="androidx.appcompat.widget.SearchView"
+        app:showAsAction="ifRoom|withText" />
+
+    <item
         android:id="@+id/action_history"
         android:icon="@drawable/ic_history"
-        android:title="История запросов"
-        app:showAsAction="always" />
+        android:title="@string/action_history"
+        app:showAsAction="ifRoom|withText" />
 
 </menu>

@@ -1,13 +1,13 @@
 package dc.bininfo.api
 
 data class BinInfo(
-    var number: NumberInfo,
-    var scheme: String,
-    var type: String,
-    var brand: String,
-    var prepaid: Boolean,
-    var country: CountryInfo,
-    var bank: BankInfo
+    var number: NumberInfo?,
+    var scheme: String?,
+    var type: String?,
+    var brand: String?,
+    var prepaid: Boolean?,
+    var country: CountryInfo?,
+    var bank: BankInfo?
 )
 
 data class NumberInfo(

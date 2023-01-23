@@ -17,7 +17,7 @@ class BinListAdapter : ListAdapter<Bin, BinListAdapter.BinViewHolder>(BinCompara
         private val typeText: TextView = itemView.findViewById(R.id.type_text)
 
         fun bind(bin: Bin) {
-            binText.text = bin.bin_num
+            binText.text = bin.binNum
             schemeText.text = bin.scheme
             typeText.text = bin.type
         }
@@ -25,11 +25,11 @@ class BinListAdapter : ListAdapter<Bin, BinListAdapter.BinViewHolder>(BinCompara
 
     class BinComparator : DiffUtil.ItemCallback<Bin>() {
         override fun areItemsTheSame(oldItem: Bin, newItem: Bin): Boolean {
-            return oldItem.bin_num == newItem.bin_num
+            return oldItem.binNum == newItem.binNum
         }
 
         override fun areContentsTheSame(oldItem: Bin, newItem: Bin): Boolean {
-            return oldItem.bin_num == newItem.bin_num
+            return oldItem.binNum == newItem.binNum
         }
 
     }

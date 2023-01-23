@@ -8,6 +8,10 @@ android {
     namespace 'dc.bininfo'
     compileSdk 33
 
+    buildFeatures{
+        dataBinding true
+    }
+
     kapt {
         arguments {
             arg("room.schemaLocation", "$projectDir/schemas")
