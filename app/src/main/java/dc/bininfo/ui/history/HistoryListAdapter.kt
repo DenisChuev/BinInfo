@@ -1,16 +1,14 @@
-package dc.bininfo.ui
+package dc.bininfo.ui.history
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import dc.bininfo.R
 import dc.bininfo.dao.Bin
 import dc.bininfo.databinding.HistoryBinItemBinding
 
-class BinListAdapter : ListAdapter<Bin, BinListAdapter.BinViewHolder>(BinComparator()) {
+class HistoryListAdapter : ListAdapter<Bin, HistoryListAdapter.BinViewHolder>(BinComparator()) {
 
     class BinViewHolder(private val itemBinding: HistoryBinItemBinding) :
         RecyclerView.ViewHolder(itemBinding.root) {

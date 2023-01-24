@@ -1,4 +1,4 @@
-package dc.bininfo.ui
+package dc.bininfo.ui.main
 
 import android.content.Intent
 import android.net.Uri
@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
@@ -17,11 +18,11 @@ import dc.bininfo.api.BinInfo
 import dc.bininfo.api.RetrofitClient
 import dc.bininfo.dao.Bin
 import dc.bininfo.databinding.ActivityMainBinding
+import dc.bininfo.ui.history.HistoryActivity
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-
 
 class MainActivity : AppCompatActivity() {
     private val TAG: String = "MainActivity"
@@ -29,6 +30,7 @@ class MainActivity : AppCompatActivity() {
     private var latitude: String? = null
     private lateinit var binding: ActivityMainBinding
     private lateinit var searchView: SearchView
+    private val viewModel: MainViewModel by viewModels { MainViewModel.Factory }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,7 +99,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun searchBin(binNum: String) {
         lifecycleScope.launch {
-            (application as BinApplication).repository.getBin(binNum).observe(this@MainActivity) {
+            viewModel.searchBin(binNum).observe(this@MainActivity) {
                 if (it != null) {
                     updateCardInfo(it)
                 } else {
