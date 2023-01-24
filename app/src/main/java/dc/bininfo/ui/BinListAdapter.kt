@@ -1,25 +1,24 @@
-package dc.bininfo
+package dc.bininfo.ui
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import dc.bininfo.R
 import dc.bininfo.dao.Bin
+import dc.bininfo.databinding.HistoryBinItemBinding
 
 class BinListAdapter : ListAdapter<Bin, BinListAdapter.BinViewHolder>(BinComparator()) {
 
-    class BinViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        private val binText: TextView = itemView.findViewById(R.id.bin_text)
-        private val schemeText: TextView = itemView.findViewById(R.id.scheme_text)
-        private val typeText: TextView = itemView.findViewById(R.id.type_text)
+    class BinViewHolder(private val itemBinding: HistoryBinItemBinding) :
+        RecyclerView.ViewHolder(itemBinding.root) {
 
         fun bind(bin: Bin) {
-            binText.text = bin.binNum
-            schemeText.text = bin.scheme
-            typeText.text = bin.type
+            itemBinding.binText.text = bin.binNum
+            itemBinding.schemeText.text = bin.scheme
+            itemBinding.typeText.text = bin.type
         }
     }
 
@@ -35,9 +34,13 @@ class BinListAdapter : ListAdapter<Bin, BinListAdapter.BinViewHolder>(BinCompara
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BinViewHolder {
-        val view: View = LayoutInflater.from(parent.context)
-            .inflate(R.layout.history_bin_item, parent, false)
-        return BinViewHolder(view)
+        return BinViewHolder(
+            HistoryBinItemBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            ),
+        )
     }
 
     override fun onBindViewHolder(holder: BinViewHolder, position: Int) {

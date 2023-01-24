@@ -8,8 +8,8 @@ android {
     namespace 'dc.bininfo'
     compileSdk 33
 
-    buildFeatures{
-        dataBinding true
+    viewBinding {
+        enabled = true
     }
 
     kapt {

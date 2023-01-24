@@ -1,21 +1,22 @@
-package dc.bininfo
+package dc.bininfo.ui
 
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
+import dc.bininfo.BinApplication
+import dc.bininfo.BinConverter
+import dc.bininfo.R
 import dc.bininfo.api.BinInfo
 import dc.bininfo.api.RetrofitClient
 import dc.bininfo.dao.Bin
+import dc.bininfo.databinding.ActivityMainBinding
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -23,42 +24,25 @@ import retrofit2.Response
 
 
 class MainActivity : AppCompatActivity() {
-    val TAG: String = "MainActivity"
-    lateinit var numberLuhn: TextView
-    lateinit var numberLength: TextView
-    lateinit var scheme: TextView
-    lateinit var type: TextView
-    lateinit var brand: TextView
-    lateinit var prepaid: TextView
-    lateinit var country: TextView
-    lateinit var bankName: TextView
-    lateinit var bankUrl: TextView
-    lateinit var bankPhone: TextView
-    lateinit var mainView: View
+    private val TAG: String = "MainActivity"
+    private var longitude: String? = null
+    private var latitude: String? = null
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var searchView: SearchView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        mainView = findViewById(R.id.main_view)
-        numberLuhn = findViewById(R.id.number_luhn_text)
-        numberLength = findViewById(R.id.number_length_text)
-        scheme = findViewById(R.id.scheme_text)
-        type = findViewById(R.id.type_text)
-        brand = findViewById(R.id.brand_text)
-        prepaid = findViewById(R.id.prepaid_text)
-        country = findViewById(R.id.country_text)
-        bankName = findViewById(R.id.bank_name)
-        bankUrl = findViewById(R.id.bank_url)
-        bankPhone = findViewById(R.id.bank_phone)
-
-        bankPhone.setOnClickListener { openDialer(bankPhone.text.toString()) }
+        binding.bankPhone.setOnClickListener { openDialer(binding.bankPhone.text.toString()) }
+        binding.countryText.setOnClickListener { openMap() }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.main_menu, menu)
         val search = menu?.findItem(R.id.action_search)
-        val searchView = search?.actionView as SearchView
+        searchView = search?.actionView as SearchView
         searchView.queryHint = getString(R.string.action_search)
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String): Boolean {
@@ -84,29 +68,30 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     private fun updateCardInfo(bin: Bin) {
-        numberLength.text = bin.numberLength.toString()
-        numberLuhn.text = bin.numberLuhn.toString()
-        scheme.text = bin.scheme
-        type.text = bin.type
-        brand.text = bin.brand
+        binding.numberLengthText.text = bin.numberLength.toString()
+        binding.numberLuhnText.text = bin.numberLuhn.toString()
+        binding.schemeText.text = bin.scheme
+        binding.typeText.text = bin.type
+        binding.brandText.text = bin.brand
 
-        if (bin.prepaid == true) prepaid.text =
-            getString(R.string.prepaid_yes_text) else prepaid.text = getString(
+        if (bin.prepaid == true) binding.prepaidText.text =
+            getString(R.string.prepaid_yes_text) else binding.prepaidText.text = getString(
             R.string.prepaid_no_text
         )
-        country.text =
-            "${bin.countryEmoji} " +
-                    "${bin.countryName} " +
-                    "latitude: ${bin.countryLat} " +
-                    "longitude: ${bin.countryLon}"
-
+        binding.countryText.text = "${bin.countryEmoji} ${bin.countryName}"
 
         if (bin.bankName != null) {
-            bankName.text = "${bin.bankName ?: ""}, ${bin.bankCity ?: ""}"
-            bankUrl.text = bin.bankUrl
-            bankPhone.text = bin.bankPhone
+            binding.bankName.text = "${bin.bankName ?: ""}, ${bin.bankCity ?: ""}"
+            binding.bankUrl.text = bin.bankUrl
+            binding.bankPhone.text = bin.bankPhone
+        }
+    }
+
+    private fun openMap() {
+        if (longitude != null && latitude != null) {
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("geo:${latitude},${longitude}"))
+            startActivity(intent)
         }
     }
 
@@ -131,11 +116,14 @@ class MainActivity : AppCompatActivity() {
                                     lifecycleScope.launch {
                                         (application as BinApplication).repository.addBin(bin)
                                     }
+                                    latitude = bin?.countryLatitude.toString()
+                                    longitude = bin?.countryLongitude.toString()
 
                                 } else if (response.code() == 404) {
+                                    searchView.isIconified = true
                                     Snackbar
                                         .make(
-                                            mainView,
+                                            binding.root,
                                             getString(R.string.bin_not_found),
                                             Snackbar.LENGTH_LONG
                                         ).show()

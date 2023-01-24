@@ -14,5 +14,6 @@
     <string name="prepaid_no_text">Нет</string>
     <string name="bin_not_found">БИН не найден</string>
     <string name="action_history">История запросов</string>
-    <string name="action_search">Поиск BIN</string>
+    <string name="action_search">Введите BIN</string>
+    <string name="bin_history">История BIN</string>
 </resources>
