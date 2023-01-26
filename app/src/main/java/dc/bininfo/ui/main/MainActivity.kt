@@ -83,11 +83,9 @@ class MainActivity : AppCompatActivity() {
         )
         binding.countryText.text = "${bin.countryEmoji} ${bin.countryName}"
 
-        if (bin.bankName != null) {
-            binding.bankName.text = "${bin.bankName ?: ""}, ${bin.bankCity ?: ""}"
-            binding.bankUrl.text = bin.bankUrl
-            binding.bankPhone.text = bin.bankPhone
-        }
+        binding.bankName.text = "${bin.bankName ?: ""}, ${bin.bankCity ?: ""}"
+        binding.bankUrl.text = bin.bankUrl
+        binding.bankPhone.text = bin.bankPhone
     }
 
     private fun openMap() {
@@ -98,46 +96,24 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchBin(binNum: String) {
-        lifecycleScope.launch {
+        try {
             viewModel.searchBin(binNum).observe(this@MainActivity) {
                 if (it != null) {
+                    latitude = it.countryLatitude.toString()
+                    longitude = it.countryLongitude.toString()
                     updateCardInfo(it)
                 } else {
-                    RetrofitClient.retrofitService.getBinInfo(binNum)
-                        .enqueue(object : Callback<BinInfo> {
-                            override fun onResponse(
-                                call: Call<BinInfo>,
-                                response: Response<BinInfo>
-                            ) {
-                                if (response.body() != null) {
-                                    val bin: Bin = BinConverter.apiToDao(
-                                        response.body()!!,
-                                        binNum
-                                    )
-                                    updateCardInfo(bin)
-                                    lifecycleScope.launch {
-                                        (application as BinApplication).repository.addBin(bin)
-                                    }
-                                    latitude = bin?.countryLatitude.toString()
-                                    longitude = bin?.countryLongitude.toString()
-
-                                } else if (response.code() == 404) {
-                                    searchView.isIconified = true
-                                    Snackbar
-                                        .make(
-                                            binding.root,
-                                            getString(R.string.bin_not_found),
-                                            Snackbar.LENGTH_LONG
-                                        ).show()
-                                }
-                            }
-
-                            override fun onFailure(call: Call<BinInfo>, t: Throwable) {
-                                Log.e(TAG, t.message, t)
-                            }
-                        })
+                    searchView.isIconified = true
+                    Snackbar
+                        .make(
+                            binding.root,
+                            getString(R.string.bin_not_found),
+                            Snackbar.LENGTH_SHORT
+                        ).show()
                 }
             }
+        } catch (_: Exception) {
+
         }
     }
 
