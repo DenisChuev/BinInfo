@@ -1,5 +1,6 @@
 package dc.bininfo
 
+import android.util.Log
 import androidx.annotation.WorkerThread
 import androidx.lifecycle.LiveData
 import dc.bininfo.api.RetrofitClient
@@ -18,10 +19,14 @@ class BinRepository(private val binDao: BinDao) {
     suspend fun getBin(binNum: String): Bin? {
         var bin = binDao.getBin(binNum)
         if (bin == null) {
-            val binInfo = RetrofitClient.retrofitService.getBinInfo(binNum)
-            if (binInfo != null) {
-                bin = BinConverter.apiToDao(binInfo, binNum)
-                addBin(bin)
+            try {
+                val binInfo = RetrofitClient.retrofitService.getBinInfo(binNum)
+                if (binInfo != null) {
+                    bin = BinConverter.apiToDao(binInfo, binNum)
+                    addBin(bin)
+                }
+            } catch (e: Exception) {
+                Log.d("BinRepository", e.message, e)
             }
 
         }
