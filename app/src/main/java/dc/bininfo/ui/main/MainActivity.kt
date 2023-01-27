@@ -96,25 +96,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchBin(binNum: String) {
-        try {
-            viewModel.searchBin(binNum).observe(this@MainActivity) {
-                if (it != null) {
-                    latitude = it.countryLatitude.toString()
-                    longitude = it.countryLongitude.toString()
-                    updateCardInfo(it)
-                } else {
-                    searchView.isIconified = true
-                    Snackbar
-                        .make(
-                            binding.root,
-                            getString(R.string.bin_not_found),
-                            Snackbar.LENGTH_SHORT
-                        ).show()
-                }
+        lifecycleScope.launch {
+            val bin = (application as BinApplication).repository.getBin(binNum)
+            if (bin != null) {
+                latitude = bin.countryLatitude.toString()
+                longitude = bin.countryLongitude.toString()
+                updateCardInfo(bin)
+            } else {
+                searchView.isIconified = true
+                Snackbar
+                    .make(
+                        binding.root,
+                        getString(R.string.bin_not_found),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
             }
-        } catch (_: Exception) {
-
         }
+
     }
 
     private fun openDialer(phone: String) {
