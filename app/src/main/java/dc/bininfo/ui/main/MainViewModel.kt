@@ -1,19 +1,18 @@
 package dc.bininfo.ui.main
 
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import dc.bininfo.BinApplication
 import dc.bininfo.BinRepository
 import dc.bininfo.dao.Bin
-import dc.bininfo.ui.history.HistoryViewModel
+import kotlinx.coroutines.launch
 
-class MainViewModel(repository: BinRepository) : ViewModel() {
-    private val binNum = MutableLiveData("")
-    val bin: LiveData<Bin> = repository.getBin(binNum.value!!)
+class MainViewModel(private val repository: BinRepository) : ViewModel() {
+    val bin = MutableLiveData<Bin?>()
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -27,8 +26,10 @@ class MainViewModel(repository: BinRepository) : ViewModel() {
         }
     }
 
-    fun searchBin(binNum: String): LiveData<Bin> {
-        this.binNum.value = binNum
+    fun searchBin(binNum: String): MutableLiveData<Bin?> {
+        viewModelScope.launch {
+            bin.value = repository.getBin(binNum)
+        }
         return bin
     }
 

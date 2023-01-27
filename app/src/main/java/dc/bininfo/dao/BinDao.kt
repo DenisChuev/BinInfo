@@ -16,5 +16,5 @@ interface BinDao {
     fun getBinHistory(): Flow<List<Bin>>
 
     @Query("SELECT * FROM bin WHERE binNum = :binNum")
-    fun getBin(binNum: String): LiveData<Bin>
+    suspend fun getBin(binNum: String): Bin?
 }

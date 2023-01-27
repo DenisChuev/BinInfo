@@ -3,7 +3,6 @@ package dc.bininfo.ui.main
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -12,17 +11,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import dc.bininfo.BinApplication
-import dc.bininfo.BinConverter
 import dc.bininfo.R
-import dc.bininfo.api.BinInfo
-import dc.bininfo.api.RetrofitClient
 import dc.bininfo.dao.Bin
 import dc.bininfo.databinding.ActivityMainBinding
 import dc.bininfo.ui.history.HistoryActivity
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private val TAG: String = "MainActivity"
@@ -83,11 +76,9 @@ class MainActivity : AppCompatActivity() {
         )
         binding.countryText.text = "${bin.countryEmoji} ${bin.countryName}"
 
-        if (bin.bankName != null) {
-            binding.bankName.text = "${bin.bankName ?: ""}, ${bin.bankCity ?: ""}"
-            binding.bankUrl.text = bin.bankUrl
-            binding.bankPhone.text = bin.bankPhone
-        }
+        binding.bankName.text = "${bin.bankName ?: ""}, ${bin.bankCity ?: ""}"
+        binding.bankUrl.text = bin.bankUrl
+        binding.bankPhone.text = bin.bankPhone
     }
 
     private fun openMap() {
@@ -98,45 +89,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchBin(binNum: String) {
-        lifecycleScope.launch {
-            viewModel.searchBin(binNum).observe(this@MainActivity) {
-                if (it != null) {
-                    updateCardInfo(it)
-                } else {
-                    RetrofitClient.retrofitService.getBinInfo(binNum)
-                        .enqueue(object : Callback<BinInfo> {
-                            override fun onResponse(
-                                call: Call<BinInfo>,
-                                response: Response<BinInfo>
-                            ) {
-                                if (response.body() != null) {
-                                    val bin: Bin = BinConverter.apiToDao(
-                                        response.body()!!,
-                                        binNum
-                                    )
-                                    updateCardInfo(bin)
-                                    lifecycleScope.launch {
-                                        (application as BinApplication).repository.addBin(bin)
-                                    }
-                                    latitude = bin?.countryLatitude.toString()
-                                    longitude = bin?.countryLongitude.toString()
+        viewModel.searchBin(binNum).observe(this@MainActivity) {
+            searchView.isIconified = true
 
-                                } else if (response.code() == 404) {
-                                    searchView.isIconified = true
-                                    Snackbar
-                                        .make(
-                                            binding.root,
-                                            getString(R.string.bin_not_found),
-                                            Snackbar.LENGTH_LONG
-                                        ).show()
-                                }
-                            }
-
-                            override fun onFailure(call: Call<BinInfo>, t: Throwable) {
-                                Log.e(TAG, t.message, t)
-                            }
-                        })
-                }
+            if (it != null) {
+                latitude = it.countryLatitude.toString()
+                longitude = it.countryLongitude.toString()
+                updateCardInfo(it)
+            } else {
+                Snackbar
+                    .make(
+                        binding.root,
+                        getString(R.string.bin_not_found),
+                        Snackbar.LENGTH_SHORT
+                    ).show()
             }
         }
     }
