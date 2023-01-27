@@ -3,7 +3,6 @@ package dc.bininfo.ui.main
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import androidx.activity.viewModels
@@ -12,17 +11,11 @@ import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.lifecycleScope
 import com.google.android.material.snackbar.Snackbar
 import dc.bininfo.BinApplication
-import dc.bininfo.BinConverter
 import dc.bininfo.R
-import dc.bininfo.api.BinInfo
-import dc.bininfo.api.RetrofitClient
 import dc.bininfo.dao.Bin
 import dc.bininfo.databinding.ActivityMainBinding
 import dc.bininfo.ui.history.HistoryActivity
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
     private val TAG: String = "MainActivity"
@@ -96,14 +89,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchBin(binNum: String) {
-        lifecycleScope.launch {
-            val bin = (application as BinApplication).repository.getBin(binNum)
-            if (bin != null) {
-                latitude = bin.countryLatitude.toString()
-                longitude = bin.countryLongitude.toString()
-                updateCardInfo(bin)
+        viewModel.searchBin(binNum).observe(this@MainActivity) {
+            searchView.isIconified = true
+
+            if (it != null) {
+                latitude = it.countryLatitude.toString()
+                longitude = it.countryLongitude.toString()
+                updateCardInfo(it)
             } else {
-                searchView.isIconified = true
                 Snackbar
                     .make(
                         binding.root,
@@ -112,7 +105,6 @@ class MainActivity : AppCompatActivity() {
                     ).show()
             }
         }
-
     }
 
     private fun openDialer(phone: String) {

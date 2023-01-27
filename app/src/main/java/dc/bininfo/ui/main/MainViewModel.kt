@@ -12,7 +12,7 @@ import dc.bininfo.dao.Bin
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: BinRepository) : ViewModel() {
-    var bin: MutableLiveData<Bin> = searchBin("")
+    val bin = MutableLiveData<Bin?>()
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {
@@ -26,9 +26,9 @@ class MainViewModel(private val repository: BinRepository) : ViewModel() {
         }
     }
 
-    fun searchBin(binNum: String): MutableLiveData<Bin> {
+    fun searchBin(binNum: String): MutableLiveData<Bin?> {
         viewModelScope.launch {
-            bin = MutableLiveData(repository.getBin(binNum))
+            bin.value = repository.getBin(binNum)
         }
         return bin
     }
