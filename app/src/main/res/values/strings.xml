@@ -5,9 +5,9 @@
     <string name="brand">"Brand: "</string>
     <string name="prepaid">"Prepaid: "</string>
     <string name="country">"COUNTRY: "</string>
-    <string name="card_number">"Card number: "</string>
-    <string name="length">"  length: "</string>
-    <string name="luhn">"  luhn: "</string>
+    <string name="country_currency">"Country currency: "</string>
+    <string name="length">"Card length: "</string>
+    <string name="luhn">"Card luhn: "</string>
     <string name="bank">БАНК</string>
     <string name="empty_history">История пуста. \n\nВыполните поиск BIN и она обновится</string>
     <string name="prepaid_yes_text">Да</string>
@@ -16,4 +16,7 @@
     <string name="action_history">История запросов</string>
     <string name="action_search">Введите BIN</string>
     <string name="bin_history">История BIN</string>
+    <string name="default_search_text">Нажмите на лупу, чтбы найти информацию</string>
+    <string name="bin_num_title">"BIN: "</string>
+    <string name="bank_not_found_text">Не найдено</string>
 </resources>

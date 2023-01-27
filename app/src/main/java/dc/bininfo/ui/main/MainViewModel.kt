@@ -12,7 +12,7 @@ import dc.bininfo.dao.Bin
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: BinRepository) : ViewModel() {
-    val bin = MutableLiveData<Bin?>()
+    val bin = MutableLiveData<Bin?>(null)
 
     companion object {
         val Factory: ViewModelProvider.Factory = viewModelFactory {

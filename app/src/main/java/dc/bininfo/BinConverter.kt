@@ -20,7 +20,8 @@ object BinConverter {
             binInfo.country?.name,
             binInfo.country?.emoji,
             binInfo.country?.longitude,
-            binInfo.country?.latitude
+            binInfo.country?.latitude,
+            binInfo.country?.currency
         )
     }
 }

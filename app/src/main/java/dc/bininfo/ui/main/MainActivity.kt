@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.SearchView
@@ -64,8 +65,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateCardInfo(bin: Bin) {
-        binding.numberLengthText.text = bin.numberLength.toString()
-        binding.numberLuhnText.text = bin.numberLuhn.toString()
+        binding.defaultSearch.visibility = View.GONE
+        binding.progress.visibility = View.INVISIBLE
+        binding.searchInfo.visibility = View.VISIBLE
+        searchView.isIconified = true
+        searchView.onActionViewCollapsed()
+
+        binding.binNumText.text = bin.binNum
         binding.schemeText.text = bin.scheme
         binding.typeText.text = bin.type
         binding.brandText.text = bin.brand
@@ -74,11 +80,26 @@ class MainActivity : AppCompatActivity() {
             getString(R.string.prepaid_yes_text) else binding.prepaidText.text = getString(
             R.string.prepaid_no_text
         )
-        binding.countryText.text = "${bin.countryEmoji} ${bin.countryName}"
+        binding.countryText.text = "${bin.countryEmoji ?: ""} ${bin.countryName ?: ""}"
+        binding.countryCurrencyText.text = bin.countryCurrency
 
-        binding.bankName.text = "${bin.bankName ?: ""}, ${bin.bankCity ?: ""}"
-        binding.bankUrl.text = bin.bankUrl
-        binding.bankPhone.text = bin.bankPhone
+        if (bin.numberLength != 0) {
+            binding.cardLengthText.text = bin.numberLength.toString()
+            binding.cardLuhnText.text = bin.numberLuhn.toString()
+        } else {
+            binding.cardLengthText.text = ""
+            binding.cardLuhnText.text = ""
+        }
+
+        if (bin.bankName != null) {
+            binding.bankName.text = "${bin.bankName ?: ""} ${bin.bankCity ?: ""}"
+            binding.bankUrl.text = bin.bankUrl
+            binding.bankPhone.text = bin.bankPhone
+        } else {
+            binding.bankName.text = getString(R.string.bank_not_found_text)
+            binding.bankUrl.text = null
+            binding.bankPhone.text = null
+        }
     }
 
     private fun openMap() {
@@ -89,20 +110,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun searchBin(binNum: String) {
+        binding.defaultSearch.visibility = View.GONE
+        binding.progress.visibility = View.VISIBLE
         viewModel.searchBin(binNum).observe(this@MainActivity) {
-            searchView.isIconified = true
-
             if (it != null) {
                 latitude = it.countryLatitude.toString()
                 longitude = it.countryLongitude.toString()
                 updateCardInfo(it)
             } else {
-                Snackbar
-                    .make(
-                        binding.root,
-                        getString(R.string.bin_not_found),
-                        Snackbar.LENGTH_SHORT
-                    ).show()
+                binding.searchInfo.visibility = View.GONE
+                binding.progress.visibility = View.INVISIBLE
+                binding.defaultSearch.visibility = View.VISIBLE
+                searchView.isIconified = true
+                searchView.onActionViewCollapsed()
             }
         }
     }

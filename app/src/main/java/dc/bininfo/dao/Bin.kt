@@ -20,5 +20,6 @@ data class Bin(
     var countryName: String?,
     var countryEmoji: String?,
     var countryLongitude: Double?,
-    var countryLatitude: Double?
+    var countryLatitude: Double?,
+    var countryCurrency: String?
 )
